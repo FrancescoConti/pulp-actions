@@ -12,10 +12,10 @@ import sys
 import time
 import requests
 import urllib.parse
-
+import json
 
 def main(sha: str, token: str, domain: str, repo: str, api_version: str,
-         retry_count: int, retry_period: int, poll_count: int, poll_period: int):
+         retry_count: int, retry_period: int, poll_count: int, poll_period: int, artifact: str=None):
     # Derive pipeline URL
     pipelines = f'https://{domain}/api/{api_version}/projects/{urllib.parse.quote_plus(repo)}/pipelines'
 
@@ -44,6 +44,28 @@ def main(sha: str, token: str, domain: str, repo: str, api_version: str,
         pipeline = next(p for p in response if p['sha'] == sha)
         if pipeline['status'] == 'success':
             print(f'[{i*poll_period}s] Pipeline success! See {pipeline["web_url"]}')
+
+            if artifact is not None:
+                # get pipeline id
+                pid = pipeline['id']
+
+                # get pipeline jobs
+                jobs = f'https://{domain}/api/{api_version}/projects/{urllib.parse.quote_plus(repo)}/pipelines/{pid}/jobs'
+                response = requests.get(jobs, headers={'PRIVATE-TOKEN': token}).json()
+                if 'error' in response:
+                    print(f'Error: \'{response["error"]}\' error response received to Gitlab API request to get pipeline status. {response["error_description"]} Gitlab API scope: \'{response["scope"]}\'')
+                    return 4
+                
+                # select testset job & job ID
+                job = next(p for p in response if p['name'] == 'testset')
+                jid = job['id']
+
+                # get job artifacts (does not fail gracefully right now)
+                artifacts = f'https://{domain}/api/{api_version}/projects/{urllib.parse.quote_plus(repo)}/jobs/{jid}/artifacts/{artifact}'
+                perf = requests.get(artifacts, headers={'PRIVATE-TOKEN': token}).json()
+                with open(f'{artifact}', 'w', encoding='utf-8') as f:
+                    json.dump(perf, f, ensure_ascii=False, indent=4)
+
             return 0
         elif pipeline['status'] in ('failed', 'canceled', 'skipped'):
             print(f'[{i*poll_period}s] Pipeline failure! See {pipeline["web_url"]}')
