@@ -65,6 +65,8 @@ def main(sha: str, token: str, domain: str, repo: str, api_version: str,
                 perf = requests.get(artifacts, headers={'PRIVATE-TOKEN': token}).json()
                 with open(f'{artifact}', 'w', encoding='utf-8') as f:
                     json.dump(perf, f, ensure_ascii=False, indent=4)
+                absartifact = os.path.abspath(artifact)
+                print(f'Saved artifact in {absartifact}!')
 
             return 0
         elif pipeline['status'] in ('failed', 'canceled', 'skipped'):
