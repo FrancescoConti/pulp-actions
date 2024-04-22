@@ -51,6 +51,7 @@ def main(sha: str, token: str, domain: str, repo: str, api_version: str,
 
                 # get pipeline jobs
                 jobs = f'https://{domain}/api/{api_version}/projects/{urllib.parse.quote_plus(repo)}/pipelines/{pid}/jobs'
+                print(f'DEBUG: {jobs} {response}')
                 response = requests.get(jobs, headers={'PRIVATE-TOKEN': token}).json()
                 if 'error' in response:
                     print(f'Error: \'{response["error"]}\' error response received to Gitlab API request to get pipeline status. {response["error_description"]} Gitlab API scope: \'{response["scope"]}\'')
@@ -62,6 +63,7 @@ def main(sha: str, token: str, domain: str, repo: str, api_version: str,
 
                 # get job artifacts (does not fail gracefully right now)
                 artifacts = f'https://{domain}/api/{api_version}/projects/{urllib.parse.quote_plus(repo)}/jobs/{jid}/artifacts/{artifact_in}'
+                print(f'DEBUG: {artifacts} {response}')
                 perf = requests.get(artifacts, headers={'PRIVATE-TOKEN': token}).json()
                 try:
                     os.makedirs(os.path.split(artifact_out)[0])
