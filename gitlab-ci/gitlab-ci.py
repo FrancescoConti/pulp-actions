@@ -71,6 +71,7 @@ def main(sha: str, token: str, domain: str, repo: str, api_version: str,
                     json.dump(perf, f, ensure_ascii=False, indent=4)
                 absartifact = os.path.abspath(artifact_out)
                 print(f'Saved artifact in {absartifact}!')
+                print(f'DEBUG: {perf}')
 
             return 0
         elif pipeline['status'] in ('failed', 'canceled', 'skipped'):
