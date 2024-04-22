@@ -41,7 +41,7 @@ inputs:
     default: 10
   artifact:
     description: 'Artifact file to save'
-    required: false
+    required: true
     default: null
 
 runs:

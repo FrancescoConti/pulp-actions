@@ -15,7 +15,7 @@ import urllib.parse
 import json
 
 def main(sha: str, token: str, domain: str, repo: str, api_version: str,
-         retry_count: int, retry_period: int, poll_count: int, poll_period: int, artifact: str=None):
+         retry_count: int, retry_period: int, poll_count: int, poll_period: int, artifact: str):
     # Derive pipeline URL
     pipelines = f'https://{domain}/api/{api_version}/projects/{urllib.parse.quote_plus(repo)}/pipelines'
 
