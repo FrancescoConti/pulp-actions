@@ -64,7 +64,7 @@ def main(sha: str, token: str, domain: str, repo: str, api_version: str,
                 # get job artifacts (does not fail gracefully right now)
                 artifacts = f'https://{domain}/api/{api_version}/projects/{urllib.parse.quote_plus(repo)}/jobs/{jid}/artifacts/{artifact_in}'
                 perf = requests.get(artifacts, headers={'PRIVATE-TOKEN': token}).json()
-                print(f'DEBUG: {artifacts} {response}')
+                print(f'DEBUG: {artifacts} {perf}')
                 try:
                     os.makedirs(os.path.split(artifact_out)[0])
                 except FileExistsError:
