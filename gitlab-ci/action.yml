@@ -39,6 +39,10 @@ inputs:
     description: 'Period of polls in seconds while pipeline is running'
     required: true
     default: 10
+  artifact:
+    description: 'Artifact file to save'
+    required: false
+    default: null
 
 runs:
   using: "composite"
