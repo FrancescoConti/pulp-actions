@@ -61,7 +61,7 @@ def main(sha: str, token: str, domain: str, repo: str, api_version: str,
                 jid = job['id']
 
                 # get job artifacts (does not fail gracefully right now)
-                artifacts = f'https://{domain}/api/{api_version}/projects/{urllib.parse.quote_plus(repo)}/jobs/{jid}/artifacts/{artifact}'
+                artifacts = f'https://{domain}/api/{api_version}/projects/{urllib.parse.quote_plus(repo)}/jobs/{jid}/artifacts/{artifact_in}'
                 perf = requests.get(artifacts, headers={'PRIVATE-TOKEN': token}).json()
                 os.makedirs(os.path.split(artifact_out)[0])
                 with open(f'{artifact_out}', 'w', encoding='utf-8') as f:
