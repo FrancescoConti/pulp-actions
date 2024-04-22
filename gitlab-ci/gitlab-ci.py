@@ -15,7 +15,7 @@ import urllib.parse
 import json
 
 def main(sha: str, token: str, domain: str, repo: str, api_version: str,
-         retry_count: int, retry_period: int, poll_count: int, poll_period: int, artifact: str):
+         retry_count: int, retry_period: int, poll_count: int, poll_period: int, artifact_in: str, artifact_out: str):
     # Derive pipeline URL
     pipelines = f'https://{domain}/api/{api_version}/projects/{urllib.parse.quote_plus(repo)}/pipelines'
 
@@ -45,7 +45,7 @@ def main(sha: str, token: str, domain: str, repo: str, api_version: str,
         if pipeline['status'] == 'success':
             print(f'[{i*poll_period}s] Pipeline success! See {pipeline["web_url"]}')
 
-            if artifact is not None:
+            if artifact_in is not None:
                 # get pipeline id
                 pid = pipeline['id']
 
@@ -63,10 +63,10 @@ def main(sha: str, token: str, domain: str, repo: str, api_version: str,
                 # get job artifacts (does not fail gracefully right now)
                 artifacts = f'https://{domain}/api/{api_version}/projects/{urllib.parse.quote_plus(repo)}/jobs/{jid}/artifacts/{artifact}'
                 perf = requests.get(artifacts, headers={'PRIVATE-TOKEN': token}).json()
-                os.makedirs(os.path.split(artifact)[0])
-                with open(f'{artifact}', 'w', encoding='utf-8') as f:
+                os.makedirs(os.path.split(artifact_out)[0])
+                with open(f'{artifact_out}', 'w', encoding='utf-8') as f:
                     json.dump(perf, f, ensure_ascii=False, indent=4)
-                absartifact = os.path.abspath(artifact)
+                absartifact = os.path.abspath(artifact_out)
                 print(f'Saved artifact in {absartifact}!')
 
             return 0
